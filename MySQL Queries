@@ -1,0 +1,340 @@
+-- MySQL dump 10.13  Distrib 8.0.33, for Linux (x86_64)
+--
+-- Host: localhost    Database: E_Commerce_Project
+-- ------------------------------------------------------
+-- Server version	8.0.33-0ubuntu0.22.04.2
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Current Database: `E_Commerce_Project`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `E_Commerce_Project` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+USE `E_Commerce_Project`;
+
+--
+-- Table structure for table `address`
+--
+
+DROP TABLE IF EXISTS `address`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `address` (
+  `houseNumber` int unsigned NOT NULL,
+  `zipCode` int unsigned NOT NULL,
+  `street` varchar(255) NOT NULL,
+  `city` varchar(255) NOT NULL,
+  `state` varchar(255) NOT NULL,
+  `country` varchar(255) NOT NULL,
+  PRIMARY KEY (`houseNumber`,`zipCode`,`street`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `address`
+--
+
+LOCK TABLES `address` WRITE;
+/*!40000 ALTER TABLE `address` DISABLE KEYS */;
+INSERT INTO `address` VALUES (1314,78852,'Chittim Trail','Eagle Pass','Texas','United States of America'),(1517,76901,'Harrison St','San Angelo','Texas','United States of America'),(2312,76905,'Loma Alta Drive','San Angelo','Texas','United States of America');
+/*!40000 ALTER TABLE `address` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cardInfo`
+--
+
+DROP TABLE IF EXISTS `cardInfo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cardInfo` (
+  `cardNumber` varchar(50) NOT NULL DEFAULT '0000 0000 0000 0000',
+  `cvv` varchar(3) NOT NULL DEFAULT '000',
+  `expDate` date NOT NULL,
+  `cardType` varchar(50) NOT NULL,
+  PRIMARY KEY (`cardNumber`,`cvv`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cardInfo`
+--
+
+LOCK TABLES `cardInfo` WRITE;
+/*!40000 ALTER TABLE `cardInfo` DISABLE KEYS */;
+INSERT INTO `cardInfo` VALUES ('0000 1111 2222 3333','911','2024-04-01','Debit'),('3333 2222 1111 0000','865','2029-07-01','Credit'),('4444 4444 4444 4444','777','2027-11-01','Credit');
+/*!40000 ALTER TABLE `cardInfo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `customer`
+--
+
+DROP TABLE IF EXISTS `customer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `customer` (
+  `firstName` varchar(60) NOT NULL,
+  `lastName` varchar(60) NOT NULL,
+  `phoneNumber` varchar(25) NOT NULL DEFAULT '+0(000)000-0000',
+  `email` varchar(60) NOT NULL,
+  `password` varchar(60) NOT NULL,
+  `houseNumber` int unsigned NOT NULL,
+  `zipCode` int unsigned NOT NULL,
+  `street` varchar(255) NOT NULL,
+  PRIMARY KEY (`phoneNumber`),
+  KEY `fk_houseNumber` (`houseNumber`,`zipCode`,`street`),
+  CONSTRAINT `fk_houseNumber` FOREIGN KEY (`houseNumber`, `zipCode`, `street`) REFERENCES `address` (`houseNumber`, `zipCode`, `street`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `customer`
+--
+
+LOCK TABLES `customer` WRITE;
+/*!40000 ALTER TABLE `customer` DISABLE KEYS */;
+INSERT INTO `customer` VALUES ('Morgan','Aldaba','+1(325)912-9691','mald@gmail.com','dd<3oml',2312,76905,'Loma Alta Drive'),('Carla','Villasomar','+1(830)282-3352','cmvilla14@angelo.edu','bballwiz!325',1517,76901,'Harrison St'),('Diego','Sanchez','+1(830)513-3325','dsanchez35@angelo.edu','adje!amnepqll3',1314,78852,'Chittim Trail');
+/*!40000 ALTER TABLE `customer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `delivery`
+--
+
+DROP TABLE IF EXISTS `delivery`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `delivery` (
+  `houseNumber` int unsigned NOT NULL,
+  `zipCode` int unsigned NOT NULL,
+  `street` varchar(255) NOT NULL,
+  `trackingNumber` int unsigned NOT NULL,
+  `phoneNumber` varchar(25) NOT NULL,
+  KEY `houseNumber` (`houseNumber`,`zipCode`,`street`),
+  KEY `trackingNumber` (`trackingNumber`),
+  KEY `phoneNumber` (`phoneNumber`),
+  CONSTRAINT `delivery_ibfk_1` FOREIGN KEY (`houseNumber`, `zipCode`, `street`) REFERENCES `address` (`houseNumber`, `zipCode`, `street`) ON DELETE CASCADE,
+  CONSTRAINT `delivery_ibfk_2` FOREIGN KEY (`trackingNumber`) REFERENCES `shipment` (`trackingNumber`) ON DELETE CASCADE,
+  CONSTRAINT `delivery_ibfk_3` FOREIGN KEY (`phoneNumber`) REFERENCES `customer` (`phoneNumber`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `delivery`
+--
+
+LOCK TABLES `delivery` WRITE;
+/*!40000 ALTER TABLE `delivery` DISABLE KEYS */;
+INSERT INTO `delivery` VALUES (1314,78852,'Chittim Trail',1122,'+1(830)513-3325'),(1517,76901,'Harrison St',667788,'+1(830)282-3352'),(2312,76905,'Loma Alta Drive',111112,'+1(325)912-9691');
+/*!40000 ALTER TABLE `delivery` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `orderInfo`
+--
+
+DROP TABLE IF EXISTS `orderInfo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `orderInfo` (
+  `orderID` int unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`orderID`)
+) ENGINE=InnoDB AUTO_INCREMENT=789102 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `orderInfo`
+--
+
+LOCK TABLES `orderInfo` WRITE;
+/*!40000 ALTER TABLE `orderInfo` DISABLE KEYS */;
+INSERT INTO `orderInfo` VALUES (121314),(123456),(789101);
+/*!40000 ALTER TABLE `orderInfo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `paidOrder`
+--
+
+DROP TABLE IF EXISTS `paidOrder`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `paidOrder` (
+  `payTotal` decimal(10,2) NOT NULL,
+  `orderID` int unsigned NOT NULL,
+  `paymentID` int unsigned NOT NULL,
+  KEY `orderID` (`orderID`),
+  KEY `paymentID` (`paymentID`),
+  CONSTRAINT `paidOrder_ibfk_1` FOREIGN KEY (`orderID`) REFERENCES `orderInfo` (`orderID`) ON DELETE CASCADE,
+  CONSTRAINT `paidOrder_ibfk_2` FOREIGN KEY (`paymentID`) REFERENCES `payment` (`paymentID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `paidOrder`
+--
+
+LOCK TABLES `paidOrder` WRITE;
+/*!40000 ALTER TABLE `paidOrder` DISABLE KEYS */;
+INSERT INTO `paidOrder` VALUES (4536.95,121314,345678),(20.22,123456,910111),(43.64,789101,121314);
+/*!40000 ALTER TABLE `paidOrder` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `payment`
+--
+
+DROP TABLE IF EXISTS `payment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `payment` (
+  `paymentID` int unsigned NOT NULL AUTO_INCREMENT,
+  `cardNumber` varchar(50) NOT NULL,
+  `cvv` varchar(3) NOT NULL,
+  PRIMARY KEY (`paymentID`),
+  KEY `cardNumber` (`cardNumber`,`cvv`),
+  CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`cardNumber`, `cvv`) REFERENCES `cardInfo` (`cardNumber`, `cvv`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=910112 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `payment`
+--
+
+LOCK TABLES `payment` WRITE;
+/*!40000 ALTER TABLE `payment` DISABLE KEYS */;
+INSERT INTO `payment` VALUES (345678,'0000 1111 2222 3333','911'),(910111,'3333 2222 1111 0000','865'),(121314,'4444 4444 4444 4444','777');
+/*!40000 ALTER TABLE `payment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `product`
+--
+
+DROP TABLE IF EXISTS `product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `product` (
+  `productID` int unsigned NOT NULL AUTO_INCREMENT,
+  `sku` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `stock` int unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`productID`)
+) ENGINE=InnoDB AUTO_INCREMENT=98766 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product`
+--
+
+LOCK TABLES `product` WRITE;
+/*!40000 ALTER TABLE `product` DISABLE KEYS */;
+INSERT INTO `product` VALUES (1011,'144rnkaeSSET','Promise Ring',1),(54321,'1421AafLE123','Self-Help Book',8),(98765,'13aecAA143LL','Cryptocurrency Miner',12);
+/*!40000 ALTER TABLE `product` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `purchase`
+--
+
+DROP TABLE IF EXISTS `purchase`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `purchase` (
+  `price` decimal(10,2) NOT NULL,
+  `paymentID` int unsigned NOT NULL,
+  `productID` int unsigned NOT NULL,
+  `phoneNumber` varchar(25) NOT NULL,
+  KEY `paymentID` (`paymentID`),
+  KEY `productID` (`productID`),
+  KEY `phoneNumber` (`phoneNumber`),
+  CONSTRAINT `purchase_ibfk_1` FOREIGN KEY (`paymentID`) REFERENCES `payment` (`paymentID`) ON DELETE CASCADE,
+  CONSTRAINT `purchase_ibfk_2` FOREIGN KEY (`productID`) REFERENCES `product` (`productID`) ON DELETE CASCADE,
+  CONSTRAINT `purchase_ibfk_3` FOREIGN KEY (`phoneNumber`) REFERENCES `customer` (`phoneNumber`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `purchase`
+--
+
+LOCK TABLES `purchase` WRITE;
+/*!40000 ALTER TABLE `purchase` DISABLE KEYS */;
+INSERT INTO `purchase` VALUES (4479.99,345678,98765,'+1(830)513-3325'),(18.99,910111,54321,'+1(830)282-3352'),(41.99,121314,1011,'+1(325)912-9691');
+/*!40000 ALTER TABLE `purchase` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `shipment`
+--
+
+DROP TABLE IF EXISTS `shipment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `shipment` (
+  `trackingNumber` int unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`trackingNumber`)
+) ENGINE=InnoDB AUTO_INCREMENT=1122334456 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `shipment`
+--
+
+LOCK TABLES `shipment` WRITE;
+/*!40000 ALTER TABLE `shipment` DISABLE KEYS */;
+INSERT INTO `shipment` VALUES (1122),(111112),(667788);
+/*!40000 ALTER TABLE `shipment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `shipmentInfo`
+--
+
+DROP TABLE IF EXISTS `shipmentInfo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `shipmentInfo` (
+  `orderDate` date NOT NULL,
+  `orderItem` varchar(500) NOT NULL,
+  `trackingNumber` int unsigned NOT NULL,
+  `orderID` int unsigned NOT NULL,
+  KEY `trackingNumber` (`trackingNumber`),
+  KEY `orderID` (`orderID`),
+  CONSTRAINT `shipmentInfo_ibfk_1` FOREIGN KEY (`trackingNumber`) REFERENCES `shipment` (`trackingNumber`) ON DELETE CASCADE,
+  CONSTRAINT `shipmentInfo_ibfk_2` FOREIGN KEY (`orderID`) REFERENCES `orderInfo` (`orderID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `shipmentInfo`
+--
+
+LOCK TABLES `shipmentInfo` WRITE;
+/*!40000 ALTER TABLE `shipmentInfo` DISABLE KEYS */;
+INSERT INTO `shipmentInfo` VALUES ('2023-07-17','BOBCAT Helium Cryptocurrency Miner',1122,121314),('2019-06-14','James Avery Artisan Promise Ring',111112,789101),('2018-01-01','How to Unlock your True Self: Self-Help Guide',667788,123456);
+/*!40000 ALTER TABLE `shipmentInfo` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-
