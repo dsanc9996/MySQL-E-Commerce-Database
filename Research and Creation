@@ -1,0 +1,11 @@
+E-R Model Design
+Establishing Entities
+	An E-Commerce Database is a database that focuses on two entities – the customer and the product. Every relationship in the E-R model should incorporate or reference either the product or the customer. The entities of an E-Commerce database are as follows: Customer, Product, Payment, Order, and Shipment (as well as the composite attributes ‘Address’ and ‘Card Info’). 
+
+Establishing Relationships
+	The relationships between each entity are numerous. The relationships for each entity are as follows:
+1.	A customer uses payment to pay for a product. This indicates a ternary relationship between the 3 entities.
+2.	Payment is then used to pay for the order. One payment can fulfill multiple orders at a time, indicating a one-to-many relationship. 
+3.	The order provides details for the shipment. One shipment can contain many orders, indicating a one-to-many relationship.
+4.	A shipment is shipped to a customer. A customer can receive one shipment at a time, indicating a one-to-one relationship. 
+
